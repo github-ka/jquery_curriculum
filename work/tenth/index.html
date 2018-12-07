@@ -69,8 +69,9 @@
 
         var seachWord = '';
         var pageNumber = 1;
- 
-        function ifIf() {
+        var err = '<li>※不適切な内容・空白一文字（漢字は含まない）の場合、検索することができません</li>';
+
+        function ifModel() {
           var word = $('#js-search-word').val();
           if(seachWord !== word){
             seachWord = word;
@@ -78,32 +79,36 @@
           }else{
             pageNumber++;
           }
+          $('.lists').empty();
           console.log(word);
         };
 
         function each(data) {
           var li = "";
-          $.each(data.Items,function(index,item){
-            console.log(index,item);
-            li +=
-              '<li class="lists__item">'+
-                '<div class="lists__item__inner">'+
-                  '<a href="'+ item.Item.itemUrl +'" class="lists__item__link" target="_blank">'+
-                    '<img src="'+ item.Item.largeImageUrl +'" class="lists__item__img" alt="">'+
-                    '<p class="lists__item__detail">作品名 :'+ item.Item.title +'</p>'+
-                    '<p class="lists__item__detail">作者 :'+ item.Item.author +'</p>'+
-                    '<p class="lists__item__detail">出版社 :'+ item.Item.publisherName +'</p>'+
-                  '</a>'+
-                '</div>'+
-              '</li>';
-          });
-          $('.lists').empty();
+            if(data.Items.length <= 0){
+              $('.lists').prepend(err);
+            }else{
+              $.each(data.Items,function(index,item){
+                // console.log(index,item);
+                li +=
+                  '<li class="lists__item">'+
+                    '<div class="lists__item__inner">'+
+                      '<a href="'+ item.Item.itemUrl +'" class="lists__item__link" target="_blank">'+
+                        '<img src="'+ item.Item.largeImageUrl +'" class="lists__item__img" alt="">'+
+                        '<p class="lists__item__detail">作品名 :'+ item.Item.title +'</p>'+
+                        '<p class="lists__item__detail">作者 :'+ item.Item.author +'</p>'+
+                        '<p class="lists__item__detail">出版社 :'+ item.Item.publisherName +'</p>'+
+                      '</a>'+
+                    '</div>'+
+                  '</li>';
+              });
           $('.lists').append(li);
+            }
         };
 
         $('#js-search-button').on('click', function(){
           // var word = $('#js-search-word').val();
-          ifIf();
+          ifModel();
           // console.log(seachWord);
           // console.log(pageNumber);
           $.ajax({
@@ -120,16 +125,16 @@
           })
           .done(function(data) {
             // この中にデータ取得後の動きを記述していきます。
-            // console.log(data);
+            // console.log(data.Items);
             // console.log(seachWord);
+            // console.log(data.Items.length <= 0);
             each(data);
           })
           .fail(function(jqXHR, textStatus, errorThrown) {
             // console.log(jqXHR, textStatus, errorThrown);
-            var err = '<p>※空白または一文字（漢字は含まない）の場合、検索することができません</p>';
-            $('.lists').empty();
             $('.lists').prepend(err);
           });
+          
         });
 
 
