@@ -69,24 +69,25 @@
 
         var seachWord = '';
         var pageNumber = 1;
-        var err = '<li>※不適切な内容・空白一文字（漢字は含まない）の場合、検索することができません</li>';
+        var err = '<li>※不適切な内容・空白・一文字（漢字は含まない）の場合、検索することができません</li>';
 
         function ifModel() {
           var word = $('#js-search-word').val();
           if(seachWord !== word){
             seachWord = word;
             pageNumber = 1;
+            $('.lists').empty();
           }else{
             pageNumber++;
           }
-          $('.lists').empty();
           console.log(word);
         };
 
         function each(data) {
           var li = "";
             if(data.Items.length <= 0){
-              $('.lists').prepend(err);
+
+              $('.lists').append(err);
             }else{
               $.each(data.Items,function(index,item){
                 // console.log(index,item);
@@ -102,7 +103,7 @@
                     '</div>'+
                   '</li>';
               });
-          $('.lists').append(li);
+          $('.lists').prepend(li);
             }
         };
 
@@ -132,6 +133,7 @@
           })
           .fail(function(jqXHR, textStatus, errorThrown) {
             // console.log(jqXHR, textStatus, errorThrown);
+            $('.lists').empty();
             $('.lists').prepend(err);
           });
           
